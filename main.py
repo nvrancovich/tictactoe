@@ -1,6 +1,3 @@
-from anyio import BusyResourceError
-
-
 empty_board = ["-","-","-",
          "-","-","-",
          "-","-","-"]
@@ -22,13 +19,15 @@ def turn(player, board):
         position = int(input("Esa posición ya esta ocupada, elegí otra: ")) - 1
     board[position] = marker
     if check_rows(board):
-        return True, board
+        return 1, board
     elif check_columns(board):
-        return True, board
+        return 1, board
     elif check_diagonals(board):
-        return True, board
+        return 1, board
+    elif check_tie(board):
+        return 2, board
     else:
-        return False, board
+        return 0, board
 
 def check_rows(board):
     row1 = board[0] == board[1] == board[2] != "-"
@@ -40,7 +39,7 @@ def check_rows(board):
 def check_columns(board):
     col1 = board[0] == board[3] == board[6] != "-"
     col2 = board[1] == board[4] == board[7] != "-"
-    col3 = board[2] == board[3] == board[8] != "-"
+    col3 = board[2] == board[5] == board[8] != "-"
     if col1 or col2 or col3:
         return True
 
@@ -50,18 +49,27 @@ def check_diagonals(board):
     if diag1 or diag2:
         return True
 
+def check_tie(board):
+    for slot in board:
+        if slot == "-":
+            return False
+    return True
+
 def main(board):
     player = 1
-    winner = False
+    result = 0
     board = empty_board
-    while not winner:
-        winner, board= turn(player, board)
-        if winner:
+    while result == 0:
+        result, board= turn(player, board)
+        if result == 1:
+            print(f"El jugador {player} ganó!")
+            break
+        elif result == 2:
+            print("Hubo un empate!")
             break
         if player == 1:
             player = 2
         else:
             player = 1
-    print(f"El jugador {player} ganó!")
 
 main(empty_board)
