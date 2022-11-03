@@ -73,3 +73,5 @@ def main(board):
             player = 1
 
 main(empty_board)
+
+# Test
